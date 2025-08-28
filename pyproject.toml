@@ -12,33 +12,13 @@ build-backend = "setuptools.build_meta"  # If not defined, then legacy behavior 
 
 [project]
 name = "scicode"
-dynamic = ["version",]
+dynamic = ["version", "dependencies",]
 description = "todo"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {file = "LICENSE"}
 keywords = ["nlp", "code"]
 authors = [
-]
-
-dependencies = [
-    "h5py",
-    "tqdm",
-    "openai",
-    "google-generativeai",
-    "anthropic",
-    "config",
-    "rich",
-    "pytest",
-    "pytest-cov",
-    "litellm",
-    "inspect-ai",
-    "datasets",
-    # requirements for execution
-    "numpy",
-    "scipy",
-    "matplotlib",
-    "sympy",
 ]
 
 # Classifiers help users find your project by categorizing it.
@@ -59,6 +39,7 @@ include-package-data = true
 
 [tool.setuptools.dynamic]
 version = {attr = "scicode.__version__"}
+dependencies = { file = "requirements-frozen.txt" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
