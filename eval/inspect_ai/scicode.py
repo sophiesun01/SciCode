@@ -10,9 +10,11 @@ from inspect_ai.solver import solver, TaskState, Generate
 from inspect_ai.scorer import scorer, mean, metric, Metric, Score, Target
 from scicode.parse.parse import extract_function_name, get_function_from_code
 from scicode.gen.models import generate_dummy_response, extract_python_script
+script_dir = Path(__file__).parent
+repo_root = script_dir.parent.parent
 
-BACKGOUND_PROMPT_TEMPLATE = Path("../data", "multistep_template.txt").read_text()
-DEFAULT_PROMPT_TEMPLATE = Path("../data", "background_comment_template.txt").read_text()
+BACKGOUND_PROMPT_TEMPLATE = Path(repo_root, "eval", "data", "multistep_template.txt").read_text()
+DEFAULT_PROMPT_TEMPLATE = Path(repo_root, "eval", "data", "background_comment_template.txt").read_text()
 
 class ScicodePromptingAssistant:
     def __init__(
@@ -149,10 +151,10 @@ class ScicodePromptingAssistant:
                         (prob_id == "62" and prev_step == 0) or 
                         (prob_id == "76" and prev_step == 2)
                     ):
-                        prev_file_path = Path(
-                            "../data",
-                            f"{prob_id}.{prev_step+1}.txt"
+                        prev_file_path = (
+                            repo_root / "eval" / "data" / f"{prob_id}.{prev_step+1}.txt"
                         )
+                        print(f"Special case, loading from {prev_file_path}")
                     else:
                         prev_file_path = Path(
                             self.output_dir,
@@ -395,7 +397,7 @@ def scicode(
     split: str = 'test',
     output_dir: str = './tmp',
     with_background: bool = False,
-    h5py_file: str = '../data/test_data.h5',
+    h5py_file: str = str(repo_root / 'eval' / 'data' / 'test_data.h5'),
     mode: str = 'normal',
 ):
     
