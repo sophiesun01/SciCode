@@ -193,11 +193,13 @@ class ScicodeEvaluator:
         code_dir: Path,
         log_dir: Path,
         with_background: bool,
+        venv_path: str,
     ):
         self.h5py_file = h5py_file
         self.code_dir = code_dir
         self.log_dir = log_dir
         self.with_background = with_background
+        self.venv_path=venv_path
     
     def _get_background_dir(self):
         return "with_background" if self.with_background else "without_background"
@@ -244,7 +246,7 @@ from scicode.parse.parse import process_hdf5_to_tuple
                         
         def run_script(script_path):
             try:
-                subprocess.run(['python', script_path], check=True, capture_output=True,
+                result = subprocess.run([self.venv_path, script_path], check=True, capture_output=True,
                             text=True, timeout=1800)
                 return 0
             except subprocess.CalledProcessError:
@@ -381,6 +383,7 @@ def scicode_scorer(**params: dict[str, Any]):
             code_dir=Path(params["output_dir"], model_name),
             log_dir=Path(params["output_dir"], model_name),
             with_background=params["with_background"],
+            venv_path=params["venv_path"],
         )
         problem_correct, total_correct, total_steps = evaluator.test_code(state.metadata)
         return Score(
@@ -399,6 +402,7 @@ def scicode(
     with_background: bool = False,
     h5py_file: str = str(repo_root / 'eval' / 'data' / 'test_data.h5'),
     mode: str = 'normal',
+    venv_path: str = 'python',
 ):
     
     dataset =  hf_dataset(
@@ -417,5 +421,6 @@ def scicode(
             output_dir=output_dir,
             with_background=with_background,
             h5py_file=h5py_file,
+            venv_path=venv_path,
         ),
     )
